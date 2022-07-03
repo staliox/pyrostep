@@ -4,7 +4,7 @@ Helps you to step handling ...
 
 1. [Installing](#installing)
 2. [Usage](#usage)
-    3. [StepHandler](#stephandler-class)
+    - [StepHandler](#stephandler-class)
 
 # Installing
 Can use **pip**:
