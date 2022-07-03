@@ -14,4 +14,11 @@ setup(
     url="https://github.com/aWolver/pyrostep",
     packages=["pyrostep"],
     requires=["pyrogram"],
+    keywords=["pyrogram", "step handler", "pyrogram helper", "pyrostep"],
+    license="GPLv2",
+    classifiers=[
+        "Framework :: Pyrogram",
+        "Programming Language :: Python :: 3.x",
+        "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+    ]
 )
