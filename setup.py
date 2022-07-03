@@ -10,6 +10,7 @@ setup(
     version=VERSION,
     description="A step handler library for pyrogram framework",
     long_description=desc, # COMPLETE THIS
+    long_description_content_type="text/markdown",
     author="aWolver",
     url="https://github.com/aWolver/pyrostep",
     packages=["pyrostep"],
