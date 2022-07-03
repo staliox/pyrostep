@@ -11,7 +11,7 @@ Helps you to step handling ...
 # Installing
 Can use **pip**:
 ```bash
-pip3 install pyrostep
+pip3 install -U pyrostep
 ```
 
 Or, Can use **git** (not recommended):
