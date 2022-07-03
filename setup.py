@@ -17,7 +17,6 @@ setup(
     keywords=["pyrogram", "step handler", "pyrogram helper", "pyrostep"],
     license="GPLv2",
     classifiers=[
-        "Framework :: Pyrogram",
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
     ]
