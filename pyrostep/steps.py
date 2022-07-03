@@ -11,6 +11,40 @@ class StepHandler:
     def __init__(self) -> None:
         self.handlers = defaultdict()
     
+    async def _step_listener(self, _c: Client, _u: Update) -> Any:
+         if hasattr(_u, "from_user") and hasattr(_u.from_user, "id"):
+            try:
+                fn = self.handlers[_u.from_user.id]
+            except KeyError:
+                pass
+            else:
+                return await fn(_c, _u)
+
+    def set_step_listener(self, app: Client, filters=None, group: int = 0, on_update: str = "on_message") -> None:
+        """
+        set_step_listener sets a listener decorator to get better result, and dont need to use first_step
+        decorator.
+
+        #### Recommended use after all decorators
+
+        Parameters:
+            app (``pyrogram.Client``):
+                which client you want to listen.
+            
+            filters (``pyrogram.filters``):
+                filters for listener.
+            
+            group (``int``):
+                which group number you want to set listener.
+
+            on_update (``str``):
+                set listener on which decorator. default on_message.
+        
+        Example:
+            >>> set_step_listener(app)
+        """
+        getattr(app, on_update)(filters=filters, group=group)(self._step_listener)
+
     def _first_step_decorator(self, cls: Callable[[Client, Update], Any]) -> Callable[[Client, Update], Any]:
         """
         _first_step_decorator works like middleware for handlers.
@@ -119,7 +153,7 @@ class StepHandler:
 
     async def ask(self, _msg: Message, _next: Callable[[Client, Update], Any], *args, **kwargs) -> None:
         """ 
-        it is shorthand for _msg.reply_text(*args); register_next_step(chat_id, _next)
+        it is shorthand for _msg.reply_text(*args, **kwargs); register_next_step(chat_id, _next)
         """
         await _msg.reply_text(*args, **kwargs)
         self.handlers[_msg.from_user.id] = _next
@@ -132,7 +166,10 @@ class StepHandler:
             _id (``int``):
                 user numeric id.
         """
-        del self.handlers[_id]
+        try:
+            del self.handlers[_id]
+        except KeyError:
+            pass
 
     async def clear(self) -> None:
         """
@@ -141,6 +178,31 @@ class StepHandler:
         self.handlers.clear()
 
 _main_handler = StepHandler()
+
+def set_step_listener(app: Client, filters=None, group: int = 0, on_update: str = "on_message") -> None:
+    """
+    set_step_listener sets a listener decorator to get better result, and dont need to use first_step
+    decorator.
+
+    #### Recommended use after all decorators
+
+    Parameters:
+        app (``pyrogram.Client``):
+            which client you want to listen.
+        
+        filters (``pyrogram.filters``):
+            filters for listener.
+        
+        group (``int``):
+            which group number you want to set listener.
+        
+        on_update (``str``):
+            set listener on which decorator. default on_message.
+    
+    Example:
+        >>> set_step_listener(app)
+    """
+    _main_handler.set_step_listener(app, filters, group, on_update)
 
 def first_step(cls: Callable = None) -> Callable[[Client, Update], Any]:
     """
@@ -200,7 +262,7 @@ async def register_next_step(_id: int, _next: Callable[[Client, Update], Any]) -
 
 async def ask(_msg: Message, _next: Callable[[Client, Update], Any], *args, **kwargs) -> None:
     """ 
-    it is shorthand for _client.send_message(chat_id, *args); register_next_step(chat_id, _next)
+    it is shorthand for _msg.reply_text(*args, **kwargs); register_next_step(chat_id, _next)
     """
     await _main_handler.ask(_msg, _next, *args, **kwargs)
 

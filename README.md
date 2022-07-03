@@ -7,6 +7,11 @@ Helps you to step handling ...
 1. [Installing](#installing)
 2. [Usage](#usage)
     - [StepHandler](#stephandler-class)
+    - [set_step_listener method](#setsteplistener-method)
+    - [use set_step_listener or first_step](#use-setsteplistener-or-firststep)
+    - [why use set_step_listener after all decorators](#why-use-setsteplistener-after-all-decorators)
+3. [TODO](#todo)
+4. [Copyright & License](#license)
 
 # Installing
 Can use **pip**:
@@ -67,6 +72,44 @@ async def step2(cli: Client, msg: Message):
     await msg.reply_text("Hello %s!" % msg.text)
 ...
 ```
+
+### set_step_listener method
+`first_step` decorator may broken your code, so i recommended use `set_step_listener` instead of `first_step`.
+
+Example:
+```python
+app = Client(...)
+# ...
+
+@app.on_message(filters=filters.command("sayhello"))
+async def step1(cli: Client, msg: Message):
+    await msg.reply_text("please send your name:")
+    await pyrostep.register_next_step(msg.from_user.id, step2)
+
+# create handler to get name:
+async def step2(cli: Client, msg: Message):
+    await msg.reply_text("Hello %s!" % msg.text)
+
+    # unregister step2 in end step (don't forget it)
+    await pyrostep.unregister_steps(msg.from_user.id)
+
+# after all decorators
+pyrostep.set_step_listener(app)
+
+# ...
+```
+
+**Note: Better you use set_step_listener after all of decorators.**
+
+## Use set_step_listener or first_step?
+to answer this, you should know how does `set_step_listener` and `first_step` works.
+
+`first_step` decorator sets middleware on your handler/decorator. checks if this user in listening users or not, if true, call step functions, and if false, call default handler.
+
+`set_step_listener` too. it sets a step listener handler without default decorator.
+
+#### Why use `set_step_listener` after all decorators?
+to check the pyrogram as the last method.
 
 > If you want clear all steps for all users, use `clear` method.
 
