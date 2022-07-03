@@ -2,6 +2,8 @@
 A step handler library for pyrogram framework. \
 Helps you to step handling ...
 
+> I tried to provide the best speed ...
+
 1. [Installing](#installing)
 2. [Usage](#usage)
     - [StepHandler](#stephandler-class)
