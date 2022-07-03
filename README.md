@@ -6,10 +6,10 @@ Helps you to step handling ...
 
 1. [Installing](#installing)
 2. [Usage](#usage)
-    - [StepHandler](#stephandler-class)
     - [set_step_listener method](#setsteplistener-method)
     - [use set_step_listener or first_step](#use-setsteplistener-or-firststep)
     - [why use set_step_listener after all decorators](#why-use-setsteplistener-after-all-decorators)
+    - [StepHandler](#stephandler-class)
 3. [TODO](#todo)
 4. [Copyright & License](#license)
 
