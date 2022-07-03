@@ -127,7 +127,7 @@ It has all of methods you want.
 
 # TODO
 - [x] Complete tests
-- [ ] Add examples
+- [x] Add examples
 - [ ] Add helper methods
 
 # License
