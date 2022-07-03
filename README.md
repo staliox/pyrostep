@@ -80,5 +80,9 @@ h = StepHandler()
 
 It has all of methods you want.
 
+# TODO
+- [ ] Complete test
+- [ ] Add helper methods
+
 # License
 Licensed under the terms of the **GNU Lesser General Public License v2**
