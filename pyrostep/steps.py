@@ -71,12 +71,12 @@ class StepHandler:
                 handler.
         """
         @functools.wraps(cls)
-        async def wrapper(_c: Client, _u: Update):
+        async def wrapper(_c: Client, _u: Update, *args, **kwargs):
 
             if hasattr(_u, "from_user") and hasattr(_u.from_user, "id"):
                 await self.unregister_steps(_u.from_user.id)
             
-            return await cls(_c, _u)
+            return await cls(_c, _u, *args, **kwargs)
 
         return wrapper
 
@@ -117,11 +117,11 @@ class StepHandler:
         """
         self.handlers[_id] = _next
 
-    async def ask(self, _msg: Message, _next: Callable[[Client, Update], Any], *args) -> None:
+    async def ask(self, _msg: Message, _next: Callable[[Client, Update], Any], *args, **kwargs) -> None:
         """ 
         it is shorthand for _msg.reply_text(*args); register_next_step(chat_id, _next)
         """
-        await _msg.reply_text(*args)
+        await _msg.reply_text(*args, **kwargs)
         self.handlers[_msg.from_user.id] = _next
 
     async def unregister_steps(self, _id: int) -> None:
@@ -198,11 +198,11 @@ async def register_next_step(_id: int, _next: Callable[[Client, Update], Any]) -
     """
     await _main_handler.register_next_step(_id, _next)
 
-async def ask(_msg: Message, _next: Callable[[Client, Update], Any], *args) -> None:
+async def ask(_msg: Message, _next: Callable[[Client, Update], Any], *args, **kwargs) -> None:
     """ 
     it is shorthand for _client.send_message(chat_id, *args); register_next_step(chat_id, _next)
     """
-    await _main_handler.ask(_msg, _next, *args)
+    await _main_handler.ask(_msg, _next, *args, **kwargs)
 
 async def unregister_steps(_id: int) -> None:
     """

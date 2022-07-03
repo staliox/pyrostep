@@ -1,6 +1,6 @@
 from setuptools import setup
 
-VERSION = "v1.0.0"
+VERSION = "v1.1.0"
 
 with open("README.md", "r") as f:
     desc = f.read()

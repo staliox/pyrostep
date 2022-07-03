@@ -83,7 +83,8 @@ h = StepHandler()
 It has all of methods you want.
 
 # TODO
-- [ ] Complete test
+- [x] Complete tests
+- [ ] Add examples
 - [ ] Add helper methods
 
 # License
