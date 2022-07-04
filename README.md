@@ -187,7 +187,7 @@ Now see filters:
 `photo_size`: Filter photo messages with width and height.
 
 # Examples
-See Examples [here](https://github.com/aWolver/examples)
+See Examples [here](https://github.com/aWolver/pyrostep/tree/main/examples)
 
 # TODO
 - [x] Add examples
