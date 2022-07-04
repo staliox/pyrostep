@@ -10,8 +10,11 @@ Helps you to step handling ...
     - [use set_step_listener or first_step](#use-set_step_listener-or-first_step)
     - [why use set_step_listener after all decorators](#why-use-set_step_listener-after-all-decorators)
     - [StepHandler](#stephandler-class)
-3. [TODO](#todo)
-4. [Copyright & License](#license)
+    - [Keyboards](#keyboards)
+    - [Filters](#filters)
+3. [Examples](#examples)
+4. [TODO](#todo)
+5. [Copyright & License](#license)
 
 # Installing
 Can use **pip**:
@@ -73,7 +76,7 @@ async def step2(cli: Client, msg: Message):
 ...
 ```
 
-### set_step_listener method
+#### set_step_listener method
 `first_step` decorator may broken your code, so i recommended use `set_step_listener` instead of `first_step`.
 
 Example:
@@ -101,7 +104,7 @@ pyrostep.set_step_listener(app)
 
 **Note: Better you use set_step_listener after all of decorators.**
 
-## Use set_step_listener or first_step?
+#### Use set_step_listener or first_step?
 to answer this, you should know how does `set_step_listener` and `first_step` works.
 
 `first_step` decorator sets middleware on your handler/decorator. checks if this user in listening users or not, if true, call step functions, and if false, call default handler.
@@ -113,7 +116,7 @@ to check the pyrogram as the last method.
 
 > If you want clear all steps for all users, use `clear` method.
 
-### StepHandler *class*
+## StepHandler *class*
 
 You can use it to have a different steps handler:
 
@@ -125,10 +128,71 @@ h = StepHandler()
 
 It has all of methods you want.
 
+## Keyboards
+import keyboards:
+```python
+from pyrostep import keyboards
+```
+
+Now see methods:
+
+`split_list` splites lst list:
+```python
+>>> keyboards.split_list([1, 2, 3, 4, 5, 6], 2)
+# [[1, 2], [3, 4], [5, 6]]
+>>> keyboards.split_list([1, 2, 3], 2)
+# [[1, 2], [3]]
+```
+
+`keyboard` creates ReplyKeyboardMarkup from your list:
+```python
+buttons = [
+    [
+        ["Top Left"], ["Top Right"]
+    ],
+    [
+        ["Bottom | Request Contact", True, "request_contact"]
+    ]
+]
+kb = keyboards.keyboard(buttons)
+```
+
+`inlinekeyboard` creates InlineKeyboardMarkup from your list:
+```python
+buttons = [
+    [
+        ["Top Left", "data_1"], ["Top Right", "data_2"]
+    ],
+    [
+        ["Bottom", "Your URL", "url"]
+    ]
+]
+ikb = inlienkeyboard(buttons)
+```
+
+## Filters
+import filters:
+```python
+from pyrostep import filters
+```
+
+Now see filters:
+
+`ttl_message`: Filter ttl messages ( ttl photo message or ttl video message ).
+
+`video_sticker`: Filter video sticker messages.
+
+`entities`: Filter messages include entities.
+
+`photo_size`: Filter photo messages with width and height.
+
+# Examples
+See Examples [here](https://github.com/aWolver/examples)
+
 # TODO
-- [x] Complete tests
 - [x] Add examples
-- [ ] Add helper methods
+- [x] Add helper methods
+- [ ] Do Other Tests
 
 # License
 Licensed under the terms of the **GNU Lesser General Public License v2**

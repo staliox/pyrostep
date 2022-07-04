@@ -281,4 +281,3 @@ async def clear() -> None:
     clear clears all user's step's.
     """
     await _main_handler.clear()
-
