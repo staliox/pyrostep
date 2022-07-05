@@ -167,7 +167,7 @@ buttons = [
         ["Bottom", "Your URL", "url"]
     ]
 ]
-ikb = inlienkeyboard(buttons)
+ikb = inlinekeyboard(buttons)
 ```
 
 ## Filters
