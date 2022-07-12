@@ -1,4 +1,7 @@
 # Pyrostep
+
+[![Downloads](https://static.pepy.tech/personalized-badge/pyrostep?period=total&units=abbreviation&left_color=red&right_color=grey&left_text=Downloads)](https://pepy.tech/project/pyrostep) ![Python](https://img.shields.io/static/v1?label=Language&message=Python&color=blue&style=flat&logo=python) ![Pyrogram](https://img.shields.io/static/v1?label=Framework&message=Pyrogram&color=red&style=flat)
+
 A step handler library for pyrogram framework. \
 Helps you to step handling ...
 
