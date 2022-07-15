@@ -57,7 +57,7 @@ def keyboard(lst: typing.List[typing.List[typing.List[str]]], **kwargs) -> Reply
         ... ]
         >>> keyboard(buttons)
     """
-    return ReplyKeyboardMarkup([ [ [_button(*kb) for kb in line] for line in lst ] ], **kwargs)
+    return ReplyKeyboardMarkup([ [_button(*kb) for kb in line] for line in lst ], **kwargs)
 
 def inlinekeyboard(lst: typing.List[typing.List[typing.List[str]]]) -> InlineKeyboardMarkup:
     """
@@ -78,7 +78,7 @@ def inlinekeyboard(lst: typing.List[typing.List[typing.List[str]]]) -> InlineKey
         ... ]
         >>> inlienkeyboard(buttons)
     """
-    return InlineKeyboardMarkup([ [ [_inline_button(*kb) for kb in line] for line in lst ] ])
+    return InlineKeyboardMarkup([ [_inline_button(*kb) for kb in line] for line in lst ])
 
 def _button(text: str, value = None, _type: str = "request_contact") -> KeyboardButton:
     """
