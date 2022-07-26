@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = "v1.4.7"
+VERSION = "v2.0.0"
 
 with open("README.md", "r") as f:
     desc = f.read()
@@ -15,7 +15,7 @@ setup(
     url="https://github.com/aWolver/pyrostep",
     packages=find_packages(exclude=["example"]),
     requires=["pyrogram"],
-    keywords=["pyrogram", "step handler", "pyrogram helper", "pyrostep"],
+    keywords=["pyrogram", "step handler", "pyrogram helper", "pyrostep", "pyrogram connection"],
     license="GPLv2",
     classifiers=[
         "Programming Language :: Python :: 3",

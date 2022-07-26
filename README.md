@@ -2,148 +2,173 @@
 
 [![Downloads](https://static.pepy.tech/personalized-badge/pyrostep?period=total&units=abbreviation&left_color=red&right_color=grey&left_text=Downloads)](https://pepy.tech/project/pyrostep) ![Python](https://img.shields.io/static/v1?label=Language&message=Python&color=blue&style=flat&logo=python) ![Pyrogram](https://img.shields.io/static/v1?label=Framework&message=Pyrogram&color=red&style=flat)
 
-A step handler library for pyrogram framework. \
-Helps you to step handling ...
+Pyrostep helps you to use pyrogram:
+- step handling
+- new filters may you need
+- change connection timeout, retries, e.g.
+- and other helper methods
 
 > I tried to provide the best speed ...
 
-1. [Installing](#installing)
+1. [Install](#install)
 2. [Usage](#usage)
-    - [set_step_listener method](#set_step_listener-method)
-    - [use set_step_listener or first_step](#use-set_step_listener-or-first_step)
-    - [why use set_step_listener after all decorators](#why-use-set_step_listener-after-all-decorators)
-    - [StepHandler](#stephandler-class)
-    - [Keyboards](#keyboards)
-    - [Filters](#filters)
-3. [Examples](#examples)
+    1. [Step handling](#step-handling)
+    2. [New filters](#new-filters)
+    3. [Connection](#connection)
+    4. [Other](#other)
 4. [TODO](#todo)
-5. [Copyright & License](#license)
 
-# Installing
-Can use **pip**:
+# Install
 ```bash
 pip3 install -U pyrostep
 ```
 
-Or, Can use **git** (not recommended):
-```bash
-git clone https://github.com/aWolver/pyrostep && cd pyrostep && python3 setup.py install
-```
-
 # Usage
-Usage is very easy ... Follow me
 
 > **before learn, You should know that this library only works as async.**
 
-First import `pyrostep`:
+## Step handling
+
+import `pyrostep.steps` first:
 ```python
-import pyrostep
+from pyrostep import steps
 ```
 
-`pyrostep` has a decorator named `first_step`, use this for handler which is first step, example:
+Now see simple example:
 ```python
-app = Client(...)
-# ...
+@app.on_message(filters.command("start"))
+async def step1(c, msg):
+    await app.send_message(msg.chat.id, "what is your name?")
+    steps.register_next_step(msg.from_user.id, step2)
 
-@app.on_message()
-@pyrostep.first_step()
-async def step1(cli: Client, msg: Message):
-    await msg.reply_text("please send your name:")
-    await pyrostep.register_next_step(msg.from_user.id, step2)
+async def step2(c, msg):
+    await app.send_message(msg.chat.id, "your name is: %s" % msg.text)
+    steps.unregister_steps(msg.from_user.id)
 
-# create handler to get name:
-async def step2(cli: Client, msg: Message):
-    await msg.reply_text("Hello %s!" % msg.text)
-
-    # unregister step2 in end step (don't forget it)
-    await pyrostep.unregister_steps(msg.from_user.id)
-
-# ...
+steps.listen(app)
 ```
 
-you can use `ask` method instead of `register_next_step`:
+First we create a function named step1, we want user name. ask user to send name with `send_message` and set next step for user with `register_next_step`. after all, we use `unregister_steps` to remove steps for user.
 
+end of code, you can see `steps.listen` function. this function listen updates which sends to your client.
+
+> you must use `listen` after all decorators.
+
+Now see `ask` method, this is make code easy for you. see example:
 ```python
-...
-async def step1(cli: Client, msg: Message):
-    pyrostep.ask(msg, step2, "please send your name:")
-...
+@app.on_message(filters.command("start"))
+async def step1(c, msg):
+    await steps.ask(
+        c, step2, msg.chat.id, "what is your name?",
+        user_id=msg.from_user.id
+    )
+
+async def step2(c, msg):
+    await app.send_message(msg.chat.id, "your name is: %s" % msg.text)
+    steps.unregister_steps(msg.from_user.id)
+
+steps.listen(app)
 ```
 
-End of this code, you see `unregister_steps` method, you can use `end_step` decorator instead of it:
+If you don't like this step handling, can use `ask_wait` function. see example:
 ```python
-...
-@end_step()
-async def step2(cli: Client, msg: Message):
-    await msg.reply_text("Hello %s!" % msg.text)
-...
+@app.on_message(filters.command("start"))
+async def step1(c, msg):
+    result = await steps.ask_wait(
+        c, step2, msg.chat.id, "what is your name?",
+        user_id=msg.from_user.id
+    )
+    await app.send_message(msg.chat.id, "your name is: %s" % result.text)
+
+steps.listen(app)
 ```
 
-#### set_step_listener method
-`first_step` decorator may broken your code, so i recommended use `set_step_listener` instead of `first_step`.
+Let's not forget the `listen_on_the_side` function.
+Use this instead `listen` method **if you have a decorator without any filter.**
 
 Example:
 ```python
-app = Client(...)
-# ...
-
-@app.on_message(filters=filters.command("sayhello"))
-async def step1(cli: Client, msg: Message):
-    await msg.reply_text("please send your name:")
-    await pyrostep.register_next_step(msg.from_user.id, step2)
-
-# create handler to get name:
-async def step2(cli: Client, msg: Message):
-    await msg.reply_text("Hello %s!" % msg.text)
-
-    # unregister step2 in end step (don't forget it)
-    await pyrostep.unregister_steps(msg.from_user.id)
-
-# after all decorators
-pyrostep.set_step_listener(app)
-
-# ...
+@app.on_message() # or @app.on_message(filters.all)
+@steps.listen_on_the_side
+async def step1(c, msg):
+    result = await steps.ask_wait(
+        c, step2, msg.chat.id, "what is your name?",
+        user_id=msg.from_user.id
+    )
+    await app.send_message(msg.chat.id, "your name is: %s" % result.text)
 ```
 
-**Note: Better you use set_step_listener after all of decorators.**
-
-#### Use set_step_listener or first_step?
-to answer this, you should know how does `set_step_listener` and `first_step` works.
-
-`first_step` decorator sets middleware on your handler/decorator. checks if this user in listening users or not, if true, call step functions, and if false, call default handler.
-
-`set_step_listener` too. it sets a step listener handler without default decorator.
-
-#### Why use `set_step_listener` after all decorators?
-to check the pyrogram as the last method.
-
-> If you want clear all steps for all users, use `clear` method.
-
-## StepHandler *class*
-
-You can use it to have a different steps handler:
+## New filters
 
 ```python
-from pyrostep import StepHandler
-
-h = StepHandler()
+from pyrostep import filters
 ```
 
-It has all of methods you want.
+- **ttl_message**: Filter ttl messages ( ttl photo message or ttl video message ).
 
-## Keyboards
-import keyboards:
+- **video_sticker**: Filter video sticker messages.
+
+- **entities**: Filter messages include entities.
+
+- **photo_size**: Filter photo messages with width and height.
+
+- **member_of_chats**: Filter users who are members of chats.
+
+## Connection
+
+#### **Function `connection_max_retries`**:
+
+Change connection max retries. (default 3)
+
+**retries message**:
+Unable to connect due to network issues: ...
+
+**Return**:
+    returns MAX_RETRIES if max_retries is None
+
+#### **Function `invoke_max_retries`**:
+Change invoke max retries. (default 5)
+
+**retries message**:
+    [...] Waiting for ... seconds before continuing (required by "...")
+    
+**Return**:
+    returns MAX_RETRIES if max_retries is None
+
+#### **Function `session_start_timeout`**:
+Change start timeout. (default 1)
+
+**Return**:
+    returns START_TIMEOUT if timeout is None. 
+
+#### **Function `session_max_retries`**:
+Change session max retries.
+
+retries message:
+    Connection failed! Trying again...
+    
+What is mode? TCP Connection mode.
+
+- TCP Modes:
+    - TCPFull
+    - TCPAbridged
+    - TCPIntermediate
+    - TCPAbridgedO
+    - TCPIntermediateO
+
+## Other
+import shortcuts:
 ```python
-from pyrostep import keyboards
+from pyrostep import shortcuts
 ```
 
 Now see methods:
 
 `split_list` splites lst list:
 ```python
->>> keyboards.split_list([1, 2, 3, 4, 5, 6], 2)
+>>> shortcuts.split_list([1, 2, 3, 4, 5, 6], 2)
 # [[1, 2], [3, 4], [5, 6]]
->>> keyboards.split_list([1, 2, 3], 2)
+>>> shortcuts.split_list([1, 2, 3], 2)
 # [[1, 2], [3]]
 ```
 
@@ -157,7 +182,7 @@ buttons = [
         ["Bottom | Request Contact", True, "request_contact"]
     ]
 ]
-kb = keyboards.keyboard(buttons)
+kb = shortcuts.keyboard(buttons)
 ```
 
 `inlinekeyboard` creates InlineKeyboardMarkup from your list:
@@ -173,29 +198,26 @@ buttons = [
 ikb = inlinekeyboard(buttons)
 ```
 
-## Filters
-import filters:
+`validation_channels` checks user already in channels or not:
 ```python
-from pyrostep import filters
+user_id = 56392019
+channels = [-102792837, -10823823, 'channel_username']
+
+is_joined = await validation_channels(
+    app, user_id, channels
+)
+# ...
+async def invite(app, id, channels) -> None:
+    print(
+        f"User {id} is not member of channels ({channels})"
+    )
+
+is_joined = await validation_channels(
+    app, user_id, channels,
+    invite_func=invite
+)
 ```
 
-Now see filters:
-
-`ttl_message`: Filter ttl messages ( ttl photo message or ttl video message ).
-
-`video_sticker`: Filter video sticker messages.
-
-`entities`: Filter messages include entities.
-
-`photo_size`: Filter photo messages with width and height.
-
-# Examples
-See Examples [here](https://github.com/aWolver/pyrostep/tree/main/examples)
-
 # TODO
-- [x] Add examples
-- [x] Add helper methods
-- [ ] Do Other Tests
-
-# License
-Licensed under the terms of the **GNU Lesser General Public License v2**
+- Add examples
+- Do other tests
