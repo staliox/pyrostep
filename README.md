@@ -219,7 +219,7 @@ is_joined = await validation_channels(
 ```
 
 # Example
-See examples [here](https://github.com/aWolver/pyrostep/tree/main/examples).
+See examples [here](https://github.com/aWolver/pyrostep/tree/main/example).
 
 # TODO
 - [x] Add examples
