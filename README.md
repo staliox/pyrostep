@@ -2,161 +2,158 @@
 
 [![Downloads](https://static.pepy.tech/personalized-badge/pyrostep?period=total&units=abbreviation&left_color=red&right_color=grey&left_text=Downloads)](https://pepy.tech/project/pyrostep) ![Python](https://img.shields.io/static/v1?label=Language&message=Python&color=blue&style=flat&logo=python) ![Pyrogram](https://img.shields.io/static/v1?label=Framework&message=Pyrogram&color=red&style=flat)
 
+A Python library to handle steps in pyrogram framework.
+
 Pyrostep helps you to use pyrogram:
-- step handling
-- new filters may you need
-- change connection timeout, retries, e.g.
-- and other helper methods
+- very easy step handling, waiting for answer, ...
+- change connection timeout, retries, etc.
 
-> I tried to provide the best speed ...
+#### **Updated to 2.8.2**
+In this update, pyrostep completely changed ...
 
-1. [Install](#install)
-2. [Usage](#usage)
-    1. [Step handling](#step-handling)
-    2. [New filters](#new-filters)
-    3. [Connection](#connection)
-    4. [Other](#other)
-4. [TODO](#todo)
+- New Methods:
+    - **safe_idle**
+    - **install**
+    - **MetaStore** method's name changed.
+    - **wait_for**
 
-# Install
+- Renamed Methods:
+    - **change_store** to **change_root_store**
+
+- Removed Methods:
+    - **listen_on_the_side**
+    - **ask**
+    - **ask_wait**
+
+- Removed Package:
+    - **filters**
+
+- [Install](#install)
+- [Learn](#learn):
+    - [step handling](#step-handling)
+    - [wait_for method](#waitfor-method)
+    - [safe idle](#about-safeidle)
+- [Other](#other-packages-and-shortcuts)
+
+# install
 ```bash
-pip3 install -U pyrostep
+python3 -m pip install -U pyrostep
 ```
 
-# Usage
+# Learn
+to start with pyrostep, you have to do two steps:
+1. import pyrostep
+2. listen on which client you want
 
-> **before learn, You should know that this library only works as async.**
-
-## Step handling
-
-import `pyrostep.steps` first:
 ```python
-from pyrostep import steps
+import pyrostep
+# ...
+cli = Client(...)
+pyrostep.listen(cli)
 ```
 
-Now see simple example:
+- [**Learn step handling**](#step-handling)
+- [**Learn wait_for method**]()
+- [**Learn about safe_idle**]()
+
+### step handling
+
+step handling have two methods:
+- `pyrostep.register_next_step(...)`
+- `pyrostep.unregister_steps(...)`
+
+`register_next_step` register next step, and `unregister_steps` removes step for user.
+
+see example: ( [see examples]() )
 ```python
-@app.on_message(filters.command("start"))
-async def step1(c, msg):
-    await app.send_message(msg.chat.id, "what is your name?")
-    steps.register_next_step(msg.from_user.id, step2)
+# ...
 
-async def step2(c, msg):
-    await app.send_message(msg.chat.id, "your name is: %s" % msg.text)
-    steps.unregister_steps(msg.from_user.id)
-
-steps.listen(app)
-```
-
-First we create a function named step1, we want user name. ask user to send name with `send_message` and set next step for user with `register_next_step`. after all, we use `unregister_steps` to remove steps for user.
-
-end of code, you can see `steps.listen` function. this function listen updates which sends to your client.
-
-> you must use `listen` after all decorators.
-
-Now see `ask` method, this is make code easy for you. see example:
-```python
-@app.on_message(filters.command("start"))
-async def step1(c, msg):
-    await steps.ask(
-        c, step2, msg.chat.id, "what is your name?",
-        user_id=msg.from_user.id
+async def step1(client, msg):
+    await msg.reply(
+        "Send your name?"
+    )
+    pyrostep.register_next_step(
+        msg.from_user.id,
+        step2
     )
 
-async def step2(c, msg):
-    await app.send_message(msg.chat.id, "your name is: %s" % msg.text)
-    steps.unregister_steps(msg.from_user.id)
-
-steps.listen(app)
-```
-
-If you don't like this step handling, can use `ask_wait` function. see example:
-```python
-@app.on_message(filters.command("start"))
-async def step1(c, msg):
-    result = await steps.ask_wait(
-        c, step2, msg.chat.id, "what is your name?",
-        user_id=msg.from_user.id
+async def step2(client, msg):
+    await msg.reply(
+        f"Your name is {msg.text}"
     )
-    await app.send_message(msg.chat.id, "your name is: %s" % result.text)
 
-steps.listen(app)
+# ...
 ```
 
-Let's not forget the `listen_on_the_side` function.
-Use this instead `listen` method **if you have a decorator without any filter.**
+### wait_for method
 
-Example:
+if you dont like step handling, can use this method.
+
+see example: ( [see examples]() )
 ```python
-@app.on_message() # or @app.on_message(filters.all)
-@steps.listen_on_the_side
-async def step1(c, msg):
-    result = await steps.ask_wait(
-        c, step2, msg.chat.id, "what is your name?",
-        user_id=msg.from_user.id
+# ...
+
+async def get_name(client, msg):
+    await msg.reply(
+        "Send your name?"
     )
-    await app.send_message(msg.chat.id, "your name is: %s" % result.text)
+    answer = await pyrostep.wait_for(
+        msg.from_user.id
+    )
+    await msg.reply(
+        f"Your name is {answer.text}"
+    )
+
+# ...
 ```
 
-## New filters
+### about safe_idle
+I recommended use `pyrostep.safe_idle` instead of `pyrogram.idle` when using pyrostep.
 
+**why?** safe_idle works like pyrogram.idle, but pyrogram.idle works with asyncio.Task,
+and this may cause a crash in a program where asyncio.Future is used.
+
+> safe_idle not handle signals.
+
+example: ( [see examples]() )
 ```python
-from pyrostep import filters
+# ...
+async def main():
+    await app.start()
+    await pyrostep.safe_idle()
+    await app.stop()
+
+app.run(main())
 ```
 
-- **ttl_message**: Filter ttl messages ( ttl photo message or ttl video message ).
-
-- **video_sticker**: Filter video sticker messages.
-
-- **entities**: Filter messages include entities.
-
-- **photo_size**: Filter photo messages with width and height.
-
-- **member_of_chats**: Filter users who are members of chats.
+# Other packages and shortcuts
 
 ## Connection
 
-#### **Function `connection_max_retries`**:
+### `connection_max_retries` method:
 
-Change connection max retries. (default 3)
+*Change connection max retries. (default 3)*
 
-**retries message**:
-Unable to connect due to network issues: ...
+#### `invoke_max_retries` method:
 
-**Return**:
-    returns MAX_RETRIES if max_retries is None
+*Change invoke max retries. (default 5)*
 
-#### **Function `invoke_max_retries`**:
-Change invoke max retries. (default 5)
+#### `session_start_timeout` method:
 
-**retries message**:
-    [...] Waiting for ... seconds before continuing (required by "...")
-    
-**Return**:
-    returns MAX_RETRIES if max_retries is None
+*Change start timeout. (default 1)*
 
-#### **Function `session_start_timeout`**:
-Change start timeout. (default 1)
+#### `session_max_retries` method:
 
-**Return**:
-    returns START_TIMEOUT if timeout is None. 
+*Change session max retries ( and tcp connection mode ).*
 
-#### **Function `session_max_retries`**:
-Change session max retries.
-
-retries message:
-    Connection failed! Trying again...
-    
-What is mode? TCP Connection mode.
-
-- TCP Modes:
+- TCP Connection Modes:
     - TCPFull
     - TCPAbridged
     - TCPIntermediate
     - TCPAbridgedO
     - TCPIntermediateO
 
-## Other
+## Shortcuts
 import shortcuts:
 ```python
 from pyrostep import shortcuts
@@ -217,10 +214,3 @@ is_joined = await validation_channels(
     invite_func=invite
 )
 ```
-
-# Example
-See examples [here](https://github.com/aWolver/pyrostep/tree/main/example).
-
-# TODO
-- [x] Add examples
-- [ ] Do other tests

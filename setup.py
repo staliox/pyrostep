@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = "v2.0.0"
+VERSION = "v2.8.2"
 
 with open("README.md", "r") as f:
     desc = f.read()
@@ -8,14 +8,23 @@ with open("README.md", "r") as f:
 setup(
     name="pyrostep",
     version=VERSION,
-    description="A step handler library for pyrogram framework",
+    description="A Python library to handle steps in pyrogram framework.",
     long_description=desc,
     long_description_content_type="text/markdown",
     author="aWolver",
     url="https://github.com/aWolver/pyrostep",
-    packages=find_packages(exclude=["example"]),
+    packages=find_packages(exclude=["examples"]),
     requires=["pyrogram"],
-    keywords=["pyrogram", "step handler", "pyrogram helper", "pyrostep", "pyrogram connection"],
+    keywords=[
+        "pyrostep",
+        "pyrogram",
+        "step handler",
+        "pyrogram helper",
+        "helper",
+        "pyrogram plugin",
+        "plugin",
+        "pyrogram connection",
+    ],
     license="GPLv2",
     classifiers=[
         "Programming Language :: Python :: 3",
