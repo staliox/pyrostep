@@ -28,12 +28,13 @@ In this update, pyrostep completely changed ...
 - Removed Package:
     - **filters**
 
-- [Install](#install)
-- [Learn](#learn):
+## Contents
+- [**Install**](#install)
+- [**Learn**](#learn): 
     - [step handling](#step-handling)
-    - [wait_for method](#waitfor-method)
-    - [safe idle](#about-safeidle)
-- [Other](#other-packages-and-shortcuts)
+    - [wait_for method](#wait_for-method)
+    - [safe idle](#about-safe_idle)
+- [**Other**](#other-packages-and-shortcuts)
 
 # install
 ```bash
