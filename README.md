@@ -131,19 +131,19 @@ app.run(main())
 
 ## Connection
 
-### `connection_max_retries` method:
+##### `connection_max_retries` method:
 
 *Change connection max retries. (default 3)*
 
-#### `invoke_max_retries` method:
+##### `invoke_max_retries` method:
 
 *Change invoke max retries. (default 5)*
 
-#### `session_start_timeout` method:
+##### `session_start_timeout` method:
 
 *Change start timeout. (default 1)*
 
-#### `session_max_retries` method:
+##### `session_max_retries` method:
 
 *Change session max retries ( and tcp connection mode ).*
 
