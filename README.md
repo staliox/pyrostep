@@ -54,8 +54,8 @@ pyrostep.listen(cli)
 ```
 
 - [**Learn step handling**](#step-handling)
-- [**Learn wait_for method**]()
-- [**Learn about safe_idle**]()
+- [**Learn wait_for method**](#wait_for-method)
+- [**Learn about safe_idle**](#about-safe_idle)
 
 ### step handling
 
@@ -65,7 +65,7 @@ step handling have two methods:
 
 `register_next_step` register next step, and `unregister_steps` removes step for user.
 
-see example: ( [see examples]() )
+see example: ( [see examples](https://github.com/aWolver/pyrostep/tree/main/examples) )
 ```python
 # ...
 
@@ -90,7 +90,7 @@ async def step2(client, msg):
 
 if you dont like step handling, can use this method.
 
-see example: ( [see examples]() )
+see example: ( [see examples](https://github.com/aWolver/pyrostep/tree/main/examples) )
 ```python
 # ...
 
@@ -116,7 +116,7 @@ and this may cause a crash in a program where asyncio.Future is used.
 
 > safe_idle not handle signals.
 
-example: ( [see examples]() )
+example: ( [see examples](https://github.com/aWolver/pyrostep/tree/main/examples) )
 ```python
 # ...
 async def main():
